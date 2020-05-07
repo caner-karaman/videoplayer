@@ -5,25 +5,21 @@ import {useState} from 'react';
 import {deviceinfo} from '../common/device';
 
 const HEADER_MAX_HEIGHT = Math.round(deviceinfo.screenHeight / 3);
-const HEADER_MIN_HEIGHT = 60;
+const HEADER_MIN_HEIGHT = Math.round(deviceinfo.screenHeight / 6);
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const Home = styled(View)`
   flex: 1;
 `;
 
+interface VideoItemProp {
+  index: number;
+}
 const VideoItem = styled(TouchableOpacity)`
   flex-direction: row;
-  border-bottom-width: 1px;
-  border-bottom-color: gray;
   padding: 15px 10px;
   justify-content: space-between;
-`;
-
-const BlackBox = styled(View)`
-  width: 125px;
-  height: 125px;
-  background-color: black;
+  background-color: ${props => props.index % 2 === 0 ? 'lightgray' : 'white'};
 `;
 
 const ImageWrapper = styled(View)``;
@@ -49,37 +45,95 @@ const Description = styled(Text)`
 `;
 const Content = styled(View)``;
 
-const renderVideoItem = () => (
-  <VideoItem>
+const handleGoToDetail = (navigation, video) => {
+  navigation.navigate('VideoDetail', video);
+};
+
+const renderVideoItem = ({navigation, video}) => (
+  <VideoItem
+    key={`${video.title} - ${video.id}`}
+    onPress={() => handleGoToDetail(navigation, video)}
+    index={video.id}>
     <ImageWrapper>
       <Image source={require('../assets/images/thumbnail.jpg')} />
     </ImageWrapper>
     <VideoContent>
       <ContentHeader>
-        <Title>Bu bir Film</Title>
-        <Time>33:24</Time>
+        <Title>{video.title}</Title>
+        <Time>{video.time}</Time>
       </ContentHeader>
       <Content>
-        <Description>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.</Description>
+        <Description>{video.description}</Description>
       </Content>
     </VideoContent>
   </VideoItem>
 );
 
-const Videos = [{}, {}, {}, {}, {}, {}, {}];
+const Videos = [
+  {
+    id: 0,
+    title: 'Video',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/small.mp4'),
+  },
+  {
+    id: 1,
+    title: 'Video 2',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/grb.mp4'),
+  },
+  {
+    id: 2,
+    title: 'Video 3',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/small.mp4'),
+  },
+  {
+    id: 3,
+    title: 'Video 4',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/grb.mp4'),
+  },
+  {
+    id: 4,
+    title: 'Video 5',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/small.mp4'),
+  },
+  {
+    id: 5,
+    title: 'Video 6',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/grb.mp4'),
+  },
+  {
+    id: 6,
+    title: 'Video 7',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus cursus libero massa, vitae sollicitudin neque sagittis sed. Quisque eleifend sodales lectus a commodo.',
+    time: '33:24',
+    video: require('../assets/videos/small.mp4'),
+  },
+];
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [scrollY] = useState(new Animated.Value(0));
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
     outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
-    extrapolate: 'clamp',
-  });
-
-  const imageOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-    outputRange: [1, 1, 0],
     extrapolate: 'clamp',
   });
 
@@ -94,7 +148,7 @@ const HomeScreen = () => {
       <Animated.View style={[styles.header, {height: headerHeight}]}>
         <Animated.Image  style={[
             styles.image,
-      {opacity: imageOpacity, transform: [{translateY: imageTranslate}]},
+      {transform: [{translateY: imageTranslate}]},
           ]}
           source={require('../assets/images/header.jpg')}
         />
@@ -106,7 +160,7 @@ const HomeScreen = () => {
           [{nativeEvent: {contentOffset: {y: scrollY}}}]
         )}
       >
-        {Videos.map(() => renderVideoItem())}
+        {Videos.map(video => renderVideoItem({navigation, video}))}
       </Animated.ScrollView>
     </Home>
   );

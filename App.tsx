@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import Homepage from './src/pages/Homepage';
+import VideoDetail from './src/pages/VideoDetail';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,10 @@ function App() {
           options={{header: () => <></>}}
           name="Anasayfa"
           component={Homepage}
+        />
+        <Stack.Screen
+          name="VideoDetail"
+          component={VideoDetail}
         />
       </Stack.Navigator>
     </NavigationContainer>
